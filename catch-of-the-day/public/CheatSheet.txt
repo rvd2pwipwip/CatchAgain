@@ -1,0 +1,424 @@
+///// 1. TOOLING AND SET UP /////
+install node.js (to npm install node modules) 
+install Chrome React Developer Tools
+install cmder terminal
+install VSCode with Prettier and Simple React Snippets
+cd to working folder and git clone catch-of-the-day
+npm install dependencies from package.json
+OR SO MUCH SIMPLER WITH:
+install create-react-app app-name
+npm start to boot app on local host (3000)
+index.js alert('hey') to validate
+
+///// Push new existing local project to GitHub:
+cd into project folder
+git init
+Create a remote, empty folder/repository on Github
+git remote add origin [GitHub repository web address]
+git push origin master
+
+
+///// 2. THINKING AND UNDERSTANDING REACT COMPONENTS /////
+Component: Reusable custom tags with props, state, context and render (spit HTML)
+
+///// 3. CREATING AND RENDERING FIRST COMPONENTS /////
+using es6 modules to import:
+
+import React from 'react';
+import { render } from 'react-dom';
+
+class ClassName extends React.Component {
+  render(){
+    return <p>Component</p>
+  }
+}
+
+export default ClassName
+
+render(<p>Render Check</p>, document.getElementById('main')); //renders Render Check
+
+Mount the component:
+render(<ClassName />, document.getElementById('main')); //renders Component
+
+Refactored to index.js and ClassName component:
+
+index.js:
+import React from 'react';
+import { render } from 'react-dom';
+import ClassName from './components/ClassName';
+
+render(<ClassName />, document.getElementById('main')); //renders Component
+
+ClassName.jsx:
+import React, { Component } from "react";
+
+class ClassName extends React.Component {
+  render(){
+    return <p>Component</p>
+  }
+}
+
+export default ClassName
+
+Simple React Snippets: imr imrc cc sfc ss ren
+
+///// 4. WRITING HTML WITH JSX /////
+<div className="class-name"></div>
+
+emmet shortcut: div.class-name outputs: <div className="class-name"></div>
+
+return ()
+
+no sibling elements: use <div></div> or <React.Fragment></React.Fragment> to wrap siblings
+{ } = JavaScript in JSX
+
+///// 5. LOADING CSS INTO OUR REACT APPLICATION /////
+Import in index.js:
+import "./css/style.css"; //import global css
+
+///// 6. CREATING OUR APPLICATION LAYOUT WITH COMPONENTS /////
+Create parent App component
+Simple React Snippets imrc cc ouputs:
+import React, { Component } from 'react';
+
+class App extends Component {
+  state = {  }
+  render() { 
+    return ( <p>I'm the parent App</p> );
+  }
+}
+ 
+export default App;
+
+Import than mount <App /> component in index.js
+import App from "./components/App";
+render(<App />, document.getElementById('main'));
+
+Create App scaffold and child components:
+<App/><Header/><Order/><Inventory>
+
+class App extends Component {
+  state = {};
+  render() {
+    return (
+      <div className="catch-of-the-day">
+        <div className="menu">
+          <Header tagline="Fresh Seafood Market" />
+        </div>
+        <Order />
+        <Inventory />
+      </div>
+    );
+  }
+}
+
+export default App;
+
+///// 7. PASSING DYNAMIC DATA WITH PROPS /////
+props is how you get data to a component (state = home, props = delivery vehicle)
+In App.js:
+<Header code="HTML" /> to move tagline value to Header props
+
+In Header.jsx:
+<h3>
+  <span>{this.props.code}</span>
+</h3>
+
+///// 8. STATELESS FUNCTIONAL COMPONENTS /////
+Components without state, used only to render JSX should be made into sfc (can have props)
+
+const Header = props => (
+  <p>I'm the Header {props.code}}</p>
+);
+
+PS: props can be destructured into ({code})
+
+///// 9. ROUTING WITH REACT ROUTER /////
+1.create a component named Router.jsx (even router is a component in react)
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+
+2.stateless functional component Router with BrowserRouter, Switch and Route (one for each route)
+3.import router rendered components in Router.jsx
+4.import React from "react"; //needed because of JSX use, otherwise compile fails with 'React' must be in scope when using JSX
+<Route/> takes 2 params: 1=path, 2=component e.g. <Route path="/store/:storeId" component={App} />
+
+///// 10. HELPER AND UTILITY FUNCTIONS /////
+import helper functions withes6 module syntax:
+import { helperFunction } from "../helpers";
+
+///// 11. EVENTS, REFS AND THIS BINDING /////
+1.create a ref property in the StorePicker class to access the <input/> element:
+myInput = React.createRef();
+2.add the ref property to the input element:
+<input
+  ref={this.myInput}
+  ...
+/>
+3.set onSubmit event on <form/> element (not onClick on <button/>!)
+4.create onSubmit handler function AS A PROPERTY WITH ARROW FUNCTION to have this binding to StorePicker:
+  handleEvent = e => {};
+
+///// 12. HANDLING EVENTS /////
+No page refresh: change url with push state through react Router
+The Router component is the parent of StorePicker (and all its imported for render components)
+Router has props.history with push method so it is available to StorePicker:
+
+goToStore = e => {
+  e.preventDefault(); //stop the form from submitting
+  const storeName = this.myInput.value.value; //get the text from the input (with a ref)
+  this.props.history.push(`/store/${storeName}`); //change page to /store/:captured_input
+};
+
+///// 13. UNDERSTANDING STATE /////
+State is an object that holds data. 
+When the data in app state changes, React updates it everywhere it is used.
+
+Create a form to add fish (name, price, status, description and image inputs).
+When form submits, it turns all inputs in property/value of new fish object (with refs).
+Pass fish onject to App state:
+1. Inside App component, create state property containing empty fishes and order objects
+state = {
+  fishes: {},
+  order: {}
+};
+2.Inside App component, create addFish method that takes in a fish to setState() api
+3.Inside App component, set addFish property of <Inventory> to this.addFish
+<Inventory addFish={this.addFish} />
+4.Inside Inventory component, set addFish property of <AddFishForm> to this.props.addFish
+<AddFishForm addFish={this.props.addFish} />
+
+5.STATE UPDATE THROUGH SETSTATE API
+I.Copy existing state (no mutation: never reach directly into state to modify it)
+  using spread operator
+II.Add new fish object to previously copied state (with spread operator)
+III.Set new fishes object to state fishes with setState()
+
+addFish = fish => {
+  //1.copy existing state
+  const fishes = { ...this.state.fishes };
+  //2.add new fish object to fishes object (bracket notation and date key)
+  fishes[`fish${Date.now()}`] = fish;
+  //3.set new fishes object to state
+  this.setState({ fishes });
+};
+
+6.Reset form of AddFishForm's event handler after fish is added
+e.currentTarget.reset();
+
+///// 14. LOADING DATA INTO STATE ONCLICK /////
+Load sample fish data into app with load sample button
+
+1.Inside App component, create loadSampleFishes method and set it as a property of <Inventory />
+2.Add a Load Sample Fishes button below the form in the Inventory component.
+3.Set the button's onClick property to props.loadSampleFishes:
+<button onClick={this.props.loadSampleFishes}>
+  Load Sample Fishes
+</button>
+4.sample-fishes.js has a fishes object exported as default (export default fishes)
+5.Import sample fishes into App component:
+import sampleFishes from "../sample-fishes";
+6.Update state with sampleFishes through setState api:
+loadSampleFishes = () => {
+  this.setState({ fishes: sampleFishes });
+};
+
+///// 15. DISPLAYING STATE WITH JSX /////
+1.Inside App component, create a <ul/> with a class of fishes under the <Header/>
+2.Create new Fish component and import it in App:
+import React, { Component } from "react";
+
+class Fish extends Component {
+  render() {
+    return <li className="menu-fish">Fish</li>;
+  }
+}
+
+export default Fish;
+
+3.Transform state fishes object into array to map it:
+Object.keys(this.state.fishes)
+4.map over the array to render a <Fish /> component for each fish:
+Object.keys(this.state.fishes).map(fish => <Fish />)
+5.Create a key property for each mapped <Fish /> component:
+Object.keys(this.state.fishes).map(fish => <Fish key={fish} />)
+6.Create a details property for each mapped <Fish /> component:
+Object.keys(this.state.fishes).map(fish => <Fish key={fish} details='' />
+7.Assign details property with each state fish data:
+Object.keys(this.state.fishes).map(fish => <Fish key={fish} details={this.state.fishes[fish]} />
+8.Format Fish component to display fish data from {this.props.details}
+
+///// 16. UPDATING OUR ORDER STATE /////
+1.in Fish component, create a const isAvailable and set it as the disabled property of Add to Order <button />:
+const isAvailable = status === "available";
+<button disabled={!isAvailable}>
+  Add to Order
+</button>
+2.set the label of the button with ternary operator:
+<button disabled={!isAvailable}>
+  {isAvailable ? "Add to Order" : "Sold Out!"}
+</button>
+3.in App component, create addToOrder property that is a () => {} that will be passed the key argument
+addToOrder = fish => {
+  //1.take a copy of the state
+  const order = { ...this.state.order };
+  //2.either add to or update the number of order
+  order[fish] = order[fish] + 1 || 1;
+  //3.setState to update
+  this.setState({ order });
+};
+4.in order to access a component's key it has to be set to another property of the component:
+<Fish
+  key={fish}
+  fish={fish}
+  details={this.state.fishes[fish]}
+  addToOrder={this.addToOrder}
+/>
+5.in fish component, create onClick property that calls an arrow function that returns the addToOrder with the fish argument:
+onClick={() => this.props.addToOrder(this.props.fish)}
+
+///// 17. DISPLAYING ORDER STATE WITH JSX /////
+1.pass App state.fisges and state.order to Order component via property:
+<Order fishes={this.state.fishes} order={this.state.order} />
+or use es6 object spread to do the same (pass ALL state objects):
+<Order {...this.state} />
+2.transform Order props.order object into array to map it:
+3.calculate total with reduce:
+const total = orderIds.reduce((prevTotal, key) => {
+  const fish = this.props.fishes[key];
+  const count = this.props.order[key];
+  const isAvailable = fish && fish.status === "available";
+  if (isAvailable) {
+    return prevTotal + count * fish.price;
+  }
+  return prevTotal;
+}, 0);
+4.render total in Order component:
+<div className="total">
+  Total:
+  <strong>{` ${formatPrice(total)}`}</strong>
+</div>
+5.loop over orderIds to display each fish with its qty inside a <ul/>:
+<ul>
+  {orderIds.map(key => (
+    <li>{key}</li>
+  ))}
+</ul>
+the <li/> element above will get complex to display quantity, name and price
+a separate "render" property as arrow function should be created instead:
+renderOrder = key => {
+  const fish = this.props.fishes[key];
+  const count = this.props.order[key];
+  const isAvailable = fish && fish.status === "available";
+  if (isAvailable) {
+    return (
+      <li key={key}> //each element must have a unique key as a unique identifier
+        {`${count} lbs ${fish ? fish.name : "fish"} 
+        ${formatPrice(count * fish.price)}`}
+      </li>
+    );
+  }
+  return (
+    <li key={key}>{`Sorry, ${
+      fish.name ? fish.name : "fish"
+    } is no longer available`}</li>
+  );
+};
+the renderOrder function is called in the orderIds map:
+<ul className="order">{orderIds.map(this.renderOrder)}</ul>
+
+///// 18. PERSISTING OUR STATE WITH FIREBASE /////
+1.create base.js file in src folder (this is not a component)
+2.import Rebase to allow state mirror to Firebase
+3.import official Firebase package  for everything but mirroring
+4.configure app:
+in Firebase, create a project, set its rules no security (temporary):
+".read": true,
+".write": true
+in Project Overview, select Add Firebase to your web app
+5.copy the content of the config object and paste it in base.js:
+const firebaseApp = firebase.initializeApp({
+  apiKey: "AIzaSyCv64oaoyh1-nRbGSnQpW28kdV-9IWTb6g",
+  authDomain: "catch-of-the-day-rvd3.firebaseapp.com",
+  databaseURL: "https://catch-of-the-day-rvd3.firebaseio.com"
+});
+6.create rebase binding:
+const base = Rebase.createClass(firebaseApp.database()); //rebase binding
+7.export both the firebase app and its rebase binding:
+//named export:
+export { firebaseApp };
+
+//default export:
+export default base;
+8.back in App.jsx, mirror App state to Firebase after component is loaded:
+componentDidMount() {
+  const { params } = this.props.match;
+  //only sync storeName/fishes in firebase
+  this.ref = base.syncState(`${params.storeId}/fishes`, {
+    context: this,
+    state: "fishes"
+  }); //not same ref as react refs
+}
+9.load app: Firebase database is still empty
+10.load sample fishes: Firebase database is now synced with state fishes
+11.stop listening for changes when App.jsx is unmounted:
+componentWillUnmount() {
+  base.removeBinding(this.ref);
+}
+
+///// 19. PERSISTING ORDER STATE WITH LOCALSTORAGE /////
+1.update localStorage every time the state is updated in componentDidUpdate with setItem
+ (the order object must be converted to a string as the 2nd argument of setItem):
+componentDidUpdate() {
+  const { params } = this.props.match;
+  //key:value = storeName:order
+  localStorage.setItem(params.storeId, JSON.stringify(this.state.order));
+}
+2.reinstate localStorage in componentDidMount to load order when page is reloaded
+  (the order string from localStorage must be parsed as an object):
+const localStorageRef = localStorage.getItem(params.storeId);
+if (localStorageRef) {
+  this.setState({ order: JSON.parse(localStorageRef) });
+}
+3.inside of Order render method, make sure fish is loaded from firebase before continuing
+  if (!fish) return null;
+
+///// 20. BI-DIRECTIONAL DATA FLOW AND LIVE STATE EDITING /////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
