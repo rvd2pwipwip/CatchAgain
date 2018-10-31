@@ -77,7 +77,7 @@ Import in index.js:
 import "./css/style.css"; //import global css
 
 ///// 6. CREATING OUR APPLICATION LAYOUT WITH COMPONENTS /////
-Create parent App component
+Create parent App.js component
 Simple React Snippets imrc cc ouputs:
 import React, { Component } from 'react';
 
