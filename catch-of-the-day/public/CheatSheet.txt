@@ -143,6 +143,33 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 4.import React from "react"; //needed because of JSX use, otherwise compile fails with 'React' must be in scope when using JSX
 <Route/> takes 2 params: 1=path, 2=component e.g. <Route path="/store/:storeId" component={App} />
 
+in index.jsx:
+import React from "react";
+import { render } from "react-dom";
+import "./css/style.css";
+import Router from "./components/Router";
+
+render(<Router />, document.getElementById("main")); //renders Router
+
+in Router.jsx:
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React from "react";
+import StorePicker from "./StorePicker";
+import App from "./App";
+import NotFound from "./NotFound";
+
+const Router = () => (
+  <BrowserRouter>
+    <Switch>
+      <Route exact path="/" component={StorePicker} />
+      <Route exact path="/store/:storeId" component={App} />
+      <Route component={NotFound} />
+    </Switch>
+  </BrowserRouter>
+);
+
+export default Router;
+
 ///// 10. HELPER AND UTILITY FUNCTIONS /////
 import helper functions withes6 module syntax:
 import { helperFunction } from "../helpers";
