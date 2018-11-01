@@ -3,7 +3,7 @@ import React, { Component } from "react";
 class Inventory extends Component {
   state = {};
   render() {
-    return <p>Inventory</p>;
+    return <div className="inventory">Inventory</div>;
   }
 }
 

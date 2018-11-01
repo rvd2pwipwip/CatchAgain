@@ -115,6 +115,7 @@ class App extends Component {
 export default App;
 
 ///// 7. PASSING DYNAMIC DATA WITH PROPS /////
+in react, tag attributes are called props
 props is how you get data to a component (state = home, props = delivery vehicle)
 In App.js:
 <Header code="HTML" /> to move tagline value to Header props
