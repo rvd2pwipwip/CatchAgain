@@ -174,6 +174,9 @@ export default Router;
 import helper functions withes6 module syntax:
 import { helperFunction } from "../helpers";
 
+<input> attribute must be defaultValue="" because value="" must go through props in React:
+<input type="text" required placeholder="Store Name" defaultValue={getFunName()} />
+
 ///// 11. EVENTS, REFS AND THIS BINDING /////
 1.create a ref property in the StorePicker class to access the <input/> element:
 myInput = React.createRef();
@@ -186,9 +189,35 @@ myInput = React.createRef();
 4.create onSubmit handler function AS A PROPERTY WITH ARROW FUNCTION to have this binding to StorePicker:
   handleEvent = e => {};
 
+class StorePicker extends React.Component {
+  myInput = React.createRef();
+  goToStore = e => {
+    //stop the form from submitting
+    e.preventDefault();
+    //get text from input
+    console.log(this.myInput.value.value);
+    //change url to /store/inputvalue
+  };
+  render() {
+    return (
+      <form action="" className="store-selector" onSubmit={this.goToStore}>
+        <h2>Please Enter A Store</h2>
+        <input
+          type="text"
+          required
+          placeholder="Store Name"
+          defaultValue={getFunName()}
+          ref={this.myInput}
+        />
+        <button type="submit">Visit Store</button>
+      </form>
+    );
+  }
+}
+
 ///// 12. HANDLING EVENTS /////
 No page refresh: change url with push state through react Router
-The Router component is the parent of StorePicker (and all its imported for render components)
+The Router component is the parent of StorePicker (and all its imported-for-render components)
 Router has props.history with push method so it is available to StorePicker:
 
 goToStore = e => {
