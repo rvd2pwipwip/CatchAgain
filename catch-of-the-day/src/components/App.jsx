@@ -4,7 +4,10 @@ import Inventory from "./Inventory";
 import Header from "./Header";
 
 class App extends Component {
-  state = {};
+  state = {
+    fishes: {},
+    order: {}
+  };
   render() {
     return (
       <div className="catch-of-the-day">
