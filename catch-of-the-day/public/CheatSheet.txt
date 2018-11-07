@@ -259,6 +259,40 @@ addFish = fish => {
   this.setState({ fishes });
 };
 
+App component has addFish(fish) method and Inventory component
+App passes addFish(fish) to Inventory via props
+Inventory has addFish in its props and AddFishForm component
+Inventory passes its addFish prop to AddFishForm props
+AddFishForm now has addFish in its props and createFish(e) method
+AddFishForm creates fish and passes it to its addFish prop which = Inventroy addFish prop which = App addFish(fish) method
+App addFish(fish) updates App state with fish passed from AddFishForm
+
+-------------------------------------------
+App
+-------------------------------------------
+state: fishes: {}
+addFish = fish => setState
+<Inventory addFish="this.addFish"/>
+-------------------------------------------
+                   |
+                   |
+-------------------------------------------
+Inventory
+-------------------------------------------
+props: addFish
+<AddFishForm addFish="this.props.addFish"/>
+-------------------------------------------
+                   |
+                   |
+-------------------------------------------
+AddFishForm
+-------------------------------------------
+props: addFish
+createFish = e => fish
+this.props.addFish(fish)
+-------------------------------------------
+
+
 6.Reset form of AddFishForm's event handler after fish is added
 e.currentTarget.reset();
 
