@@ -19,6 +19,14 @@ class App extends Component {
     this.setState({ fishes });
     // console.log("adding a fish");
   };
+  addToOrder = fish => {
+    //1.copy existing state
+    const order = { ...this.state.order };
+    //2.either add to or update the number of order
+    order[fish] = order[fish] + 1 || 1;
+    //3.set new fishes object to state
+    this.setState({ order });
+  };
   loadSampleFishes = () => {
     this.setState({ fishes: sampleFishes });
   };
@@ -29,7 +37,12 @@ class App extends Component {
           <Header tagline="Fresh Seafood Market" />
           <ul className="fishes">
             {Object.keys(this.state.fishes).map(fish => (
-              <Fish key={fish} details={this.state.fishes[fish]} />
+              <Fish
+                key={fish}
+                fish={fish}
+                details={this.state.fishes[fish]}
+                addToOrder={this.addToOrder}
+              />
             ))}
           </ul>
         </div>
