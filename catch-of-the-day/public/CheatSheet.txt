@@ -330,7 +330,7 @@ export default Fish;
 Object.keys(this.state.fishes)
 4.map over the array to render a <Fish /> component for each fish:
 Object.keys(this.state.fishes).map(fish => <Fish />)
-5.Create a key property for each mapped <Fish /> component:
+5.React needs a key property for each mapped <Fish /> component:
 Object.keys(this.state.fishes).map(fish => <Fish key={fish} />)
 6.Create a details property for each mapped <Fish /> component:
 Object.keys(this.state.fishes).map(fish => <Fish key={fish} details='' />
