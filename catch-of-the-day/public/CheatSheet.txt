@@ -368,7 +368,7 @@ addToOrder = fish => {
 onClick={() => this.props.addToOrder(this.props.fish)}
 
 ///// 17. DISPLAYING ORDER STATE WITH JSX /////
-1.pass App state.fisges and state.order to Order component via property:
+1.pass App state.fishes and state.order to Order component via property:
 <Order fishes={this.state.fishes} order={this.state.order} />
 or use es6 object spread to do the same (pass ALL state objects):
 <Order {...this.state} />
