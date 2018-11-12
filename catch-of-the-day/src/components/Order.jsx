@@ -6,6 +6,8 @@ class Order extends Component {
     const fish = this.props.fishes[key];
     const count = this.props.order[key];
     const isAvailable = fish && fish.status === "available";
+    //make sure fish is loaded from firebase before continuing
+    if (!fish) return null;
     if (isAvailable) {
       return (
         <li key={key}>

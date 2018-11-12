@@ -4,12 +4,37 @@ import Inventory from "./Inventory";
 import Header from "./Header";
 import sampleFishes from "../sample-fishes";
 import Fish from "./Fish";
+import base from "../base";
 
 class App extends Component {
   state = {
     fishes: {},
     order: {}
   };
+  componentDidMount() {
+    const { params } = this.props.match; //destructured params
+    //first reinstate our localStorage
+    const localStorageRef = localStorage.getItem(params.storeId);
+    if (localStorageRef) {
+      this.setState({ order: JSON.parse(localStorageRef) });
+    }
+    //only sync storeName/fishes in firebase
+    this.ref = base.syncState(`${params.storeId}/fishes`, {
+      context: this,
+      state: "fishes"
+    }); //not same ref as react refs
+  }
+
+  componentDidUpdate() {
+    const { params } = this.props.match; //destructured params
+    //key:value = storeName:order
+    localStorage.setItem(params.storeId, JSON.stringify(this.state.order));
+  }
+
+  componentWillUnmount() {
+    base.removeBinding(this.ref); //remove binding when user leaves app
+  }
+
   addFish = fish => {
     //1.copy existing state
     const fishes = { ...this.state.fishes };
