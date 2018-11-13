@@ -11,6 +11,7 @@ class App extends Component {
     fishes: {},
     order: {}
   };
+  //sync firebase and app state
   componentDidMount() {
     const { params } = this.props.match; //destructured params
     //first reinstate our localStorage
@@ -18,19 +19,20 @@ class App extends Component {
     if (localStorageRef) {
       this.setState({ order: JSON.parse(localStorageRef) });
     }
+    //store ref to be able to remove it on unmount
     //only sync storeName/fishes in firebase
     this.ref = base.syncState(`${params.storeId}/fishes`, {
       context: this,
       state: "fishes"
     }); //not same ref as react refs
   }
-
+  //save data to browser local storage
   componentDidUpdate() {
     const { params } = this.props.match; //destructured params
     //key:value = storeName:order
     localStorage.setItem(params.storeId, JSON.stringify(this.state.order));
   }
-
+  //unlisten to clear memory
   componentWillUnmount() {
     base.removeBinding(this.ref); //remove binding when user leaves app
   }
@@ -41,8 +43,7 @@ class App extends Component {
     //2.add new fish object to fishes objects (bracket notation and date key)
     fishes[`fish${Date.now()}`] = fish;
     //3.set new fishes object to state
-    this.setState({ fishes });
-    // console.log("adding a fish");
+    this.setState({ fishes }); // == fishes: fishes in es6 when property name == value name
   };
   updateFish = (key, updatedFish) => {
     //1.copy current state
@@ -50,6 +51,14 @@ class App extends Component {
     //2.update that state
     fishes[key] = updatedFish;
     //3.set new fishes object to state
+    this.setState({ fishes });
+  };
+  deleteFish = key => {
+    //1.copy current state
+    const fishes = { ...this.state.fishes };
+    //2.delete the fish
+    fishes[key] = null; //firebase requires null to remove data
+    //3.set new fishes to object state
     this.setState({ fishes });
   };
   addToOrder = fish => {
@@ -79,9 +88,11 @@ class App extends Component {
             ))}
           </ul>
         </div>
+        {/* <Order {...this.state} /> can be used but passes entire state */}
         <Order fishes={this.state.fishes} order={this.state.order} />
         <Inventory
           addFish={this.addFish}
+          deleteFish={this.deleteFish}
           loadSampleFishes={this.loadSampleFishes}
           fishes={this.state.fishes}
           updateFish={this.updateFish}

@@ -1,3 +1,4 @@
+
 ///// 1. TOOLING AND SET UP /////
 install node.js (to npm install node modules) 
 install Chrome React Developer Tools
@@ -568,8 +569,18 @@ handleChange = e => {
   this.props.updateFish(this.props.index, updatedFish);
 };
 
-
-
+///// 21. REMOVING ITEMS FROM STATE /////
+1.in App.jsx, create a deleteFish method (below updateFish):
+deleteFish = key => {
+  //1.copy current state
+  const fishes = { ...this.state.fishes };
+  //2.delete the fish
+  fishes[key] = null;  //firebase requires null to remove data
+  //3.set new fishes to object state
+  this.setState({ fishes });
+};
+2.pass the deleteFish method as a prop from App to Inventory to EditFishForm
+2. hook the deleteFish method to a button in EditFishForm:
 
 
 
