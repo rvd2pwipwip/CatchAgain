@@ -440,7 +440,8 @@ export { firebaseApp };
 
 //default export:
 export default base;
-8.back in App.jsx, mirror App state to Firebase after component is loaded:
+8.back in App.jsx, import base and mirror App state to Firebase after component is loaded:
+import base from "../base";
 componentDidMount() {
   const { params } = this.props.match;
   //only sync storeName/fishes in firebase
@@ -474,9 +475,98 @@ if (localStorageRef) {
   if (!fish) return null;
 
 ///// 20. BI-DIRECTIONAL DATA FLOW AND LIVE STATE EDITING /////
-
-
-
+1.create new EditFishForm component
+2.to view fishes in Inventory, add fish prop to <Inventory/> component inside of App
+fishes={this.state.fishes}
+3.import EditFishForm in Inventory.jsx
+4.just above the <AddFishForm/>, loop over each fish in Inventory.jsx props.fishes to render an <EditFishForm> for each fish
+{Object.keys(this.props.fishes).map(f => (<EditFishForm />))}
+5.in EditFishForm, return a div with a class of fish-edit with all the fish inputs:
+class EditFishForm extends Component {
+  state = {};
+  render() {
+    return (
+      <div className="fish-edit">
+        <input type="text" name="name" />
+        <input type="number" name="price" />
+        <select type="text" name="status">
+          <option value="available">Fresh!</option>
+          <option value="unavailable">Sold Out!</option>
+        </select>
+        <textarea name="desc" />
+        <input type="text" name="image" />
+      </div>
+    );
+  }
+}
+6.pass each fish as the fish prop of <EditFishForm/> inside Inventory.jsx component:
+<EditFishForm fish={this.props.fishes[f]} />
+7.give each <EditFishForm/> a key prop with a unique value to avoid React warning:
+<EditFishForm key={f} fish={this.props.fishes[f]} />
+8.display each value in the EditFishForm.jsx <div> inputs:
+<div className="fish-edit">
+  <input type="text" name="name" value={this.props.fish.name} />
+  <input type="number" name="price" value={this.props.fish.price} />
+  <select type="text" name="status" value={this.props.fish.status}>
+    <option value="available">Fresh!</option>
+    <option value="unavailable">Sold Out!</option>
+  </select>
+  <textarea name="desc" value={this.props.fish.desc} />
+  <input type="text" name="image" value={this.props.fish.image} />
+</div>
+9.add an onChange event to each input to be able to edit state inside of an editable input
+onChange={this.handleChange}
+10.create the handleChange method of the EditFishForm component:
+handleChange = e => {
+  //update this fish
+  //1.take a copy of the current fish
+  const updatedFish = {
+    ...this.props.fish,
+    //computed property names to update corresponding prop
+    [e.currentTarget.name]: e.currentTarget.value
+  };
+};
+11.in App.jsx (below addFish), create an updateFish method to be able to pass down values to EditFishForm:
+updateFish = (key, updatedFish) => {
+  //1.copy current state
+  const fishes = { ...this.state.fishes };
+  //2.update that state
+  fishes[key] = updatedFish;
+  //3.set new fishes object to state
+  this.setState({ fishes });
+};
+12.add updateFish prop to Inventory to pass method to EditForm:
+<Inventory
+  addFish={this.addFish}
+  loadSampleFishes={this.loadSampleFishes}
+  fishes={this.state.fishes}
+  updateFish={this.updateFish}
+/>
+13.pass it again via props to EditFishForm:
+<EditFishForm
+  key={f}
+  fish={this.props.fishes[f]}
+  updateFish={this.props.updateFish}
+/>
+14.in Inventory, create an index prop on EditFishForm to pass the key to its props:
+<EditFishForm
+  key={f}
+  index={f}
+  fish={this.props.fishes[f]}
+  updateFish={this.props.updateFish}
+/>
+15.update fish value in handleChange() of EditFishForm:
+handleChange = e => {
+  //update this fish
+  //1.take a copy of the current fish
+  const updatedFish = {
+    ...this.props.fish,
+    //computed property names to update corresponding prop
+    [e.currentTarget.name]: e.currentTarget.value
+  };
+  //2.update fish values
+  this.props.updateFish(this.props.index, updatedFish);
+};
 
 
 
