@@ -580,7 +580,39 @@ deleteFish = key => {
   this.setState({ fishes });
 };
 2.pass the deleteFish method as a prop from App to Inventory to EditFishForm
-2. hook the deleteFish method to a button in EditFishForm:
+3.hook the deleteFish method to a button in EditFishForm (inline):
+<button onClick={() => this.props.deleteFish(this.props.index)}>
+  Delete Fish
+</button>
+4.in App.jsx, create removeFromOrder method (below addToOrder):
+removeFromOrder = key => {
+  //1.copy existing state
+  const order = { ...this.state.order };
+  //2.remove item from order
+  delete order[key]; //not mirroring to firebase, can use delete instead of null
+  //3.set new fishes to object state
+  this.setState({ order });
+};
+5.pass the removeFromOrder method as a prop from App to Order:
+<Order
+  fishes={this.state.fishes}
+  order={this.state.order}
+  removeFromOrder={this.removeFromOrder}
+/>
+6.hook the deleteFish method to a button in Order (inline):
+<button onClick={() => this.props.removeFromOrder(key)}>
+  &times;
+</button>
+order li button css to display on hover:
+ul.order li:hover button {
+  display: inline;
+}
+ul.order li button {
+  border: 0;
+  display: none;
+  line-height: 1;
+  padding: 0;
+}
 
 
 

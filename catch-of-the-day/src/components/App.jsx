@@ -69,6 +69,14 @@ class App extends Component {
     //3.set new fishes object to state
     this.setState({ order });
   };
+  removeFromOrder = key => {
+    //1.copy existing state
+    const order = { ...this.state.order };
+    //2.remove item from order
+    delete order[key]; //not mirroring to firebase, can use delete
+    //3.set new fishes to object state
+    this.setState({ order });
+  };
   loadSampleFishes = () => {
     this.setState({ fishes: sampleFishes });
   };
@@ -89,13 +97,18 @@ class App extends Component {
           </ul>
         </div>
         {/* <Order {...this.state} /> can be used but passes entire state */}
-        <Order fishes={this.state.fishes} order={this.state.order} />
+        <Order
+          fishes={this.state.fishes}
+          order={this.state.order}
+          removeFromOrder={this.removeFromOrder}
+        />
         <Inventory
           addFish={this.addFish}
+          updateFish={this.updateFish}
           deleteFish={this.deleteFish}
+          removeFromOrder={this.removeFromOrder}
           loadSampleFishes={this.loadSampleFishes}
           fishes={this.state.fishes}
-          updateFish={this.updateFish}
         />
       </div>
     );
