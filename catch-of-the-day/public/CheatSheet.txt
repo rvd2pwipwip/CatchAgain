@@ -614,9 +614,124 @@ ul.order li button {
   padding: 0;
 }
 
+///// 22. ANIMATING REACT COMPONENTS /////
+Animate sliding in and out of order items.
+1.in Order.jsx, import 2 new react components from transition group:
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+2.down in the <ul/> of orders, replace the <ul/> tag by a <TransitionGroup/> tag
+3.set the component property to ul to return a ul element as before replacing the tag:
+<TransitionGroup component="ul" className="order">
+  {orderIds.map(this.renderOrder)}
+</TransitionGroup>
+4.wrap <li/> elements into a <CSSTransition/> tag and add classNames, key and timeout properties:
+if (isAvailable) {
+  return (
+    <CSSTransition
+      classNames="order"
+      key={key}
+      timeout={{ enter: 250, exit: 250 }}
+    >
+      <li key={key}>
+        {`${count} lbs ${fish ? fish.name : "fish"} 
+      ${formatPrice(count * fish.price)}`}
+        <button onClick={() => this.props.removeFromOrder(key)}>
+          &times;
+        </button>
+      </li>
+    </CSSTransition>
+  );
+}
+return (
+  <CSSTransition
+    classNames="order"
+    key={key}
+    timeout={{ enter: 250, exit: 250 }}
+  >
+    <li key={key}>{`Sorry, ${
+      fish.name ? fish.name : "fish"
+    } is no longer available`}</li>
+  </CSSTransition>
+);
+5.delete all css code in _animations.styl file in css folder (will rewrite from scratch)
+6.install stylus support extension in vscode to use preprocessor stylus css
+7.kill current process in terminal (ctrl-c)
+8.run styles:watch script from package.json to recompile to css on every change in .styl files:
+npm run styles:watch
+9.to run both npm run styles:watch and npm start at the same time, use watch script from package.json:
+npm run watch
+10.ready to set animation parameters in Order.jsx <CSSTransition/> tags, set enter and exit to 5000
+11.in browser console, inspect <li/> element to view classNames (from CSSTransition) in action:
+<li class="">2 lbs Pacific Halibut $34.48<button>×</button></li>
+becomes
+<li class="order-exit order-exit-active">2 lbs Pacific Halibut $34.48<button>×</button></li>
+for 5000ms then reverts to
+<li class="">2 lbs Pacific Halibut $34.48<button>×</button></li>
+12.in animations.styl, enter parameters for both animation state classes (order-enter and order-exit):
+.order-enter							//start state
+  background: red
+  &.order-enter-active		//end state
+    background: yellow 	//immediately makes background yellow for 5000ms
 
+.order-enter							//start state
+  background: red
+  transition: 5s					//immediately makes background red and transitions to yellow during 5s
+  &.order-enter-active		//end state
+    background: yellow
+13.add translation transforms to make li element slide in:
+.order-enter
+  background: red
+  transform: translateX(-120%)		//from left offset
+  transition: 5s
+  &.order-enter-active
+    background: yellow
+    transform: translateX(0)			//to final position
+14.add order-exit parameters:
+.order-exit
+  background: thistle 
+  transform: translateX(0)				//from start position
+  transition: 5s
+  &.order-exit-active
+    background: palegoldenrod
+    transform: translateX(120%)	//to right offset
+15.add max-height and padding parameters, change transition times form 5000 to 0.5s:
+.order-enter
+  background: red
+  transform: translateX(-120%)
+  transition: 0.5s
+  max-height: 0
+  padding: 0
+  &.order-enter-active
+    background: yellow
+    transform: translateX(0)
+    max-height: 60px
+    padding: 2rem 0
 
+.order-exit
+  background: thistle 
+  transform: translateX(0)
+  transition: 0.5s
+  &.order-exit-active
+    background: palegoldenrod
+    transform: translateX(120%)
+16.don't forget to change timeout properties of <CSSTransition/> components in Order.jsx:
+timeout={{ enter: 500, exit: 500 }}
+17.add !important to padding parameters to override css padding during animation and get rid of test colors:
+.order-enter
+  transform: translateX(-120%)
+  transition: 0.5s
+  max-height: 0
+  padding: 0 !important
+  &.order-enter-active
+    transform: translateX(0)
+    max-height: 60px
+    padding: 2rem 0 !important
 
+.order-exit
+  transform: translateX(0)
+  transition: 0.5s
+  &.order-exit-active
+    transform: translateX(120%)
+    padding: 0
 
 
 
