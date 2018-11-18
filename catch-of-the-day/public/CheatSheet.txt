@@ -1,4 +1,3 @@
-
 ///// 1. TOOLING AND SET UP /////
 install node.js (to npm install node modules) 
 install Chrome React Developer Tools
@@ -732,7 +731,8 @@ timeout={{ enter: 500, exit: 500 }}
   &.order-exit-active
     transform: translateX(120%)
     padding: 0
-
+18.animate qty digit with new qty pushing old qty up
+in Order.jsx,
 
 
 
