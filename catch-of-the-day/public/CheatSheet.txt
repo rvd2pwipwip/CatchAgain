@@ -732,7 +732,55 @@ timeout={{ enter: 500, exit: 500 }}
     transform: translateX(120%)
     padding: 0
 18.animate qty digit with new qty pushing old qty up
-in Order.jsx,
+in Order.jsx, wrap the { count } in a <span/> then wrap everything in the <li/> into another <span/>:
+<li key={key}>
+  <span>
+    <span>{count}</span>
+    lbs ${fish ? fish.name : "fish"}
+    {formatPrice(count * fish.price)}
+    <button onClick={() => this.props.removeFromOrder(key)}>
+      &times;
+    </button>
+  </span>
+</li>
+19.wrap the count <span/> into a <TransitionGroup/> and wrap it again in a <CSSTransition/> with parameters:
+<TransitionGroup component="span" className="count">
+  <CSSTransition
+    classNames="count" //count-enter, count-enter-active etc
+    key={count} //CSSTransition will create 2 different <span/> elements
+    timeout={{ enter: 5000, exit: 5000 }}
+  >
+    <span>{count}</span>
+  </CSSTransition>
+</TransitionGroup>
+20.in animations.styl, enter parameters for both animation state classes (count-enter and count-exit):
+.count-enter
+  transition 0.5s
+  transform translateY(100%)
+  &.count-enter-active
+    transform translateY(0)
+
+.count-exit
+  transform translateY(0)
+  transition 0.5s
+  position absolute
+  left 0
+  bottom 0
+  &.count-exit-active
+    transform translateY(-100%)
+20.for better DRY code, make an object with the attributes of both <CSSTransition/> components:
+const transitionOptions = {
+  classNames: "order",
+  key,
+  timeout: { enter: 500, exit: 500 }
+}
+21.replace the <CSStransition/> attributes with a spread of transitionOptions:
+(Works with count transition but not with order???)
+<CSSTransition {...transitionOptions}>
+  <li key={key}>{`Sorry, ${
+    fish.name ? fish.name : "fish"
+  } is no longer available`}</li>
+</CSSTransition>
 
 
 

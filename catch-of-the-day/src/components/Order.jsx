@@ -7,6 +7,11 @@ class Order extends Component {
     const fish = this.props.fishes[key];
     const count = this.props.order[key];
     const isAvailable = fish && fish.status === "available";
+    const transitionOptions = {
+      classNames: "order",
+      key,
+      timeout: { enter: 500, exit: 500 }
+    };
     //make sure fish is loaded from firebase before continuing
     if (!fish) return null;
     if (isAvailable) {
@@ -16,9 +21,21 @@ class Order extends Component {
           key={key}
           timeout={{ enter: 500, exit: 500 }}
         >
+          {/* <CSSTransition {...transitionOptions}> */}
           <li key={key}>
-            {`${count} lbs ${fish ? fish.name : "fish"} 
-          ${formatPrice(count * fish.price)}`}
+            <span>
+              <TransitionGroup component="span" className="count">
+                <CSSTransition
+                  classNames="count" //count-enter, count-enter-active etc
+                  key={count} //CSSTransition will create 2 different <span/> elements
+                  timeout={{ enter: 500, exit: 500 }}
+                >
+                  <span>{count}</span>
+                </CSSTransition>
+              </TransitionGroup>
+              {`lbs ${fish ? fish.name : "fish"}
+               ${formatPrice(count * fish.price)}`}
+            </span>
             <button onClick={() => this.props.removeFromOrder(key)}>
               &times;
             </button>
@@ -27,11 +44,12 @@ class Order extends Component {
       );
     }
     return (
-      <CSSTransition
-        classNames="order"
-        key={key}
-        timeout={{ enter: 500, exit: 500 }}
-      >
+      // <CSSTransition
+      //   classNames="order"
+      //   key={key}
+      //   timeout={{ enter: 500, exit: 500 }}
+      // >
+      <CSSTransition {...transitionOptions}>
         <li key={key}>{`Sorry, ${
           fish.name ? fish.name : "fish"
         } is no longer available`}</li>
