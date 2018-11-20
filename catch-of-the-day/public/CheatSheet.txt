@@ -775,12 +775,46 @@ const transitionOptions = {
   timeout: { enter: 500, exit: 500 }
 }
 21.replace the <CSStransition/> attributes with a spread of transitionOptions:
-(Works with count transition but not with order???)
+(Works with count transition but not with order transition???)
 <CSSTransition {...transitionOptions}>
   <li key={key}>{`Sorry, ${
     fish.name ? fish.name : "fish"
   } is no longer available`}</li>
 </CSSTransition>
+
+///// 23. COMPONENT VALIDATION WITH PROPTYPES /////
+1.in Header.jsx, look at the the <h3/> tag that has a <span/> with {props.tagline}
+2.to specify what should be the type the tagline prop, import PropTypes:
+import PropTypes from "prop-types";
+3.below the Header prop (stateless function component), add a propTypes object to Header:
+Header.propTypes = {
+  
+};
+4.pass needed props in the Header.propTypes object (only tagline string in this case)
+with optional isRequired:
+Header.propTypes = {
+  tagline: PropTypes.string.isRequired
+};
+5.in Fish.jsx, import PropTypes and add static PropTypes inside component (not a sfc)
+-propTypes is static because it will apply the same props to all Fish instance components:
+class Fish extends Component {
+  static propTypes = {
+    
+  }
+6.use shape PropTypes to pass all the props with their type to the static propTypes:
+class Fish extends Component {
+  static propTypes = {
+    details: PropTypes.shape({
+      image: PropTypes.string,
+      name: PropTypes.string,
+      desc: PropTypes.string,
+      status: PropTypes.string,
+      price: PropTypes.number
+    }),
+    addToOrder: PropTypes.func
+  };
+
+  
 
 
 
