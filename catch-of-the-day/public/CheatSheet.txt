@@ -815,6 +815,15 @@ class Fish extends Component {
   };
 7.repeat for all components (open file and search for this.props)
 
+///// 24. AUTHENTICATION /////
+1.open Firebase project, go to Authentication and select Set up sign-in method and Facebook.
+2.in Facebook developers, create new app (catch of the day) then select Settings>Basic
+3.grab the App ID and Secret to copy it them in Firebase
+4.in Firebase, once App ID and Secret are entered, copy the OAuth URI
+5.in Facebook for developers product page, paste the OAuth URI in the Valid OAuth Redirect URIs field
+6.Set Embedded Browser OAuth Login to Yes
+
+
   
 
 
