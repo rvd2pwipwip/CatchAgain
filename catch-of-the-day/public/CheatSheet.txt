@@ -813,6 +813,7 @@ class Fish extends Component {
     }),
     addToOrder: PropTypes.func
   };
+7.repeat for all components (open file and search for this.props)
 
   
 
