@@ -921,10 +921,130 @@ authenticate = provider => {
 authHandler = async authData => {
   console.log(authData);
 };
+23.a) look up the current store in the firebase database:
+import base, { firebaseApp } from "../base";
 
+24.b) create local Inventory state and set values to null:
+state = {
+  uid: null,
+  owner: null
+};
 
+25.define final authHandler() method:
+authHandler = async authData => {
+  //1. look up the current store in the firebase database
+  const store = await base.fetch(this.props.storeId, { context: this });
+  //2. claim it if there is no owner yet
+  if (!store.owner) {
+    //save it as our own
+    await base.post(`${this.props.storeId}/owner`, {
+      data: authData.user.uid
+    });
+  }
+  //3.set the state of the inventory component to reflect the current user
+  this.setState({
+    uid: authData.user.uid,
+    owner: store.owner || authData.user.uid
+  });
+};
+26.show inventory only when logged in as owner with render method of Inventory.jsx component
+render() {
+  //1.check if user is logged in
+  if (!this.state.uid) {
+    return <Login authenticate={this.authenticate} />;
+  }
+  //2.check if logged in user is not store owner
+  if (this.state.uid !== this.state.owner) {
+    return (
+      <div>
+        <p>You are not the owner of this store</p>
+      </div>
+    );
+  }
+  //.otherwise user is store owner
+  return (
+    <div className="inventory">
+      <h2>Inventory</h2>
+      {Object.keys(this.props.fishes).map(f => (
+        <EditFishForm
+          key={f}
+          index={f}
+          fish={this.props.fishes[f]}
+          updateFish={this.props.updateFish}
+          deleteFish={this.props.deleteFish}
+        />
+      ))}
+      <AddFishForm addFish={this.props.addFish} />
+      <button onClick={this.props.loadSampleFishes}>
+        Load Sample Fishes
+      </button>
+    </div>
+  );
+}
+27.create log out button in the render method as a const to insert it in both needed locations:
+render() {
+  const logout = <button onClick={this.logout}>Log Out</button>;
 
-  
+  //1.check if user is logged in
+  if (!this.state.uid) {
+    return <Login authenticate={this.authenticate} />;
+  }
+  //2.check if logged in user is not store owner
+  if (this.state.uid !== this.state.owner) {
+    return (
+      <div>
+        <p>You are not the owner of this store</p>
+        {logout}
+      </div>
+    );
+  }
+  //.otherwise user is store owner
+  return (
+    <div className="inventory">
+      <h2>Inventory</h2>
+      {logout}
+      {Object.keys(this.props.fishes).map(f => (
+        <EditFishForm
+          key={f}
+          index={f}
+          fish={this.props.fishes[f]}
+          updateFish={this.props.updateFish}
+          deleteFish={this.props.deleteFish}
+        />
+      ))}
+      <AddFishForm addFish={this.props.addFish} />
+      <button onClick={this.props.loadSampleFishes}>
+        Load Sample Fishes
+      </button>
+    </div>
+  );
+}
+
+28.create logout method:
+logout = async () => {
+  await firebase.auth().signOut();
+  this.setState({ uid: null });
+};
+29.on browser refresh, check if user is logged in with a componentDidMount:
+componentDidMount() {
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      this.authHandler({ user });
+    }
+  });
+}
+30.lock firebase down for security in Firebase database tab > rules (copy from security-rules.json):
+{
+  "rules": {
+    ".write": "!data.exists()",
+    ".read": true,
+    "$room": {
+      ".write":
+        "auth != null && (!data.exists() || data.child('owner').val() === auth.uid)",
+      ".read": true
+    }
+  }
+}
 
 
 
